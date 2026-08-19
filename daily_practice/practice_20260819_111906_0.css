@@ -1,0 +1,82 @@
+/* TODO: Migrate these theme variables to a global :root stylesheet later */
+:root {
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --primary-accent: #3b82f6; /* Need to double check accessibility contrast on light backgrounds */
+  --text-main: #1e293b;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  
+  /* Temporarily keeping this here to debug layout shifts in devtools */
+  /* outline: 1px dashed red; */
+}
+
+/* We need a wrapper to act as the container context */
+.card-wrapper {
+  container-type: inline-size;
+  container-name: card-container;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* REFACTOR: Should probably use :has() selector here for interactive card states once global support is slightly higher */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.card-desc {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Responsive adjustments based on the parent element's width instead of viewport */
+@container card-container (min-width: 450px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .card-image-placeholder {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    
+    /* FIXME: Safari 15 rendering bug causes occasional layout squeeze. 
+       Adding min-width as a defensive fallback for now */
+    min-width: 100px;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
