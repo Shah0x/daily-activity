@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Accordion - Practice</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --text-color: #1f2937;
+            --bg-color: #f3f4f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .accordion {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            /* Note: border-radius with child backgrounds can bleed, hence overflow: hidden */
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            outline: none;
+        }
+
+        .accordion-header:hover, .accordion-header:focus {
+            background-color: #f9fafb;
+        }
+
+        /* TODO: Improve focus styles for keyboard navigation */
+        .accordion-header:focus-visible {
+            outline: 2px solid var(--primary-color);
+        }
+
+        .accordion-icon {
+            font-size: 0.8rem;
+            transition: transform 0.2s ease;
+            color: #9ca3af;
+        }
+
+        .accordion-item.is-active .accordion-icon {
+            transform: rotate(180deg);
+            color: var(--primary-color);
+        }
+
+        .accordion-collapse {
+            /* Smooth height transitions need actual JS-computed heights or CSS grid tricks */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-body {
+            padding: 0 24px 20px 24px;
+            color: #4b5563;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="accordion">
+        <!-- TODO: Add dynamic ARIA attributes (aria-expanded, aria-controls) in JS for accessibility -->
+        <div class="accordion-item">
+            <button class="accordion-header">
+                What is this component?
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-collapse">
+                <div class="accordion-body">
+                    This is a vanilla HTML/CSS/JS accordion built during daily UI practice. It uses scrollHeight calculation dynamically to ensure smooth expand transitions regardless of text length.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                Can I open multiple items at once?
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-collapse">
+                <div class="accordion-body">
+                    Yes, by default this implementation allows multiple items to remain open. However, the logic can easily be updated to auto-collapse siblings if desired.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                Is it accessible?
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-collapse">
+                <div class="accordion-body">
+                    It's currently semi-accessible using buttons for headers to handle basic keyboard focus. ARIA tags are still a work-in-progress.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const headers = document.querySelectorAll('.accordion-header');
+
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const item = header.closest('.accordion-item');
+                    const collapseContainer = item.querySelector('.accordion-collapse');
+                    const isActive = item.classList.contains('is-active');
+
+                    // console.log('Clicked accordion header:', header.innerText.trim());
+
+                    if (isActive) {
+                        // Close current
+                        collapseContainer.style.maxHeight = null;
+                        item.classList.remove('is-active');
+                    } else {
+                        // Open current
+                        // Note: scrollHeight retrieves the total height of the content, even when hidden
+                        collapseContainer.style.maxHeight = collapseContainer.scrollHeight + 'px';
+                        item.classList.add('is-active');
+                    }
+                });
+            });
+
+            // Minor refactor note: If window resizing occurs, active accordion item heights might need recalculating.
+            // Leaving a resize observer implementation for next session's practice task.
+        });
+    </script>
+</body>
+</html>
