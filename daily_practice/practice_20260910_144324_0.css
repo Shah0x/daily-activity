@@ -1,0 +1,107 @@
+/* TODO: Migrate these root vars to a central theme file once design tokens are finalized */
+:root {
+  --card-gap: 1.5rem;
+  --card-min-width: 280px;
+  --card-bg: #ffffff;
+  --card-border-radius: 12px;
+  
+  /* debug helper - toggle to test layout bounds */
+  /* --card-border-debug: 1px solid red; */
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));
+  gap: var(--card-gap);
+  padding: 1rem;
+  
+  /* Required to query this container's inline size in child components */
+  container-type: inline-size;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--card-border-radius);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: var(--card-border-debug, none);
+  
+  /* FIXME: Hover state feels slightly laggy on low-end mobile. Limit paint invalidation? */
+  will-change: transform; 
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card__image-wrapper {
+  position: relative;
+  width: 100%;
+  /* Modern aspect ratio. Standard in Safari 15+ */
+  aspect-ratio: 16 / 9;
+  background-color: #f3f4f6;
+}
+
+/* Fallback for older browsers without aspect-ratio support. 
+   Removing this next sprint if iOS 14 analytics drop below 0.5% */
+@supports not (aspect-ratio: 16 / 9) {
+  .card__image-wrapper {
+    padding-top: 56.25%; /* 16:9 */
+    height: 0;
+  }
+  .card__image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+/* Container query triggers styling based on parent width, not viewport */
+@container (min-width: 450px) {
+  .card__content {
+    /* TODO: ask Sarah if we want to switch layout to row-flow for wide cards */
+    /* flex-direction: row; */
+    background-color: #fcfcfc; /* subtle visual indicator */
+  }
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.card__description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
+  
+  /* Truncate to exactly 3 lines. Webkit prefixed properties are still required here */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
